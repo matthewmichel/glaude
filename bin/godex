@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Codex on Gloo AI: starts the local proxy if needed, then runs `codex` with a provider pointed at it.
+#   godex [codex args...]   godex --stop-proxy | --proxy-log | --update
+set -euo pipefail
+
+self="${BASH_SOURCE[0]}"
+while [[ -L "$self" ]]; do
+  target="$(readlink "$self")"
+  [[ "$target" == /* ]] && self="$target" || self="$(dirname "$self")/$target"
+done
+GLOO_ROOT="$(cd "$(dirname "$self")/.." && pwd)"
+source "$GLOO_ROOT/bin/lib.sh"
+
+gloo_common_flag "$@" && exit 0
+
+if ! command -v "${CODEX_BIN:-codex}" >/dev/null 2>&1; then
+  echo "godex: Codex is not installed (npm install -g @openai/codex)" >&2
+  exit 1
+fi
+
+gloo_ensure_proxy
+
+export GLOO_PROXY_TOKEN
+model="${GODEX_MODEL:-$(gloo_config GODEX_MODEL)}"
+model="${model:-gloo-anthropic-claude-sonnet-4.6}"
+
+args=(
+  -c model_provider=gloo_proxy
+  -c "model_providers.gloo_proxy={name=\"Gloo (local proxy)\",base_url=\"$GLOO_PROXY_URL/v1\",env_key=\"GLOO_PROXY_TOKEN\",wire_api=\"responses\"}"
+)
+user_model=false
+for arg in "$@"; do
+  [[ "$arg" == -m || "$arg" == --model || "$arg" == --model=* || "$arg" == model=* ]] && user_model=true
+done
+$user_model || args+=(-c "model=\"$model\"")
+
+exec "${CODEX_BIN:-codex}" "${args[@]}" "$@"

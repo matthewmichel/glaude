@@ -1,0 +1,28 @@
+{
+  "name": "better-glooai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Run Claude Code (glaude) and Codex (godex) on Gloo AI through a local Anthropic Messages / Responses proxy.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "glaude": "./bin/glaude",
+    "godex": "./bin/godex"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env src/server.ts",
+    "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env --watch src/server.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matthewmichel/better-glooai.git"
+  }
+}

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Claude Code on Gloo AI: starts the local proxy if needed, then runs `claude` against it.
+#   glaude [claude args...]   glaude --stop-proxy | --proxy-log | --update
+set -euo pipefail
+
+self="${BASH_SOURCE[0]}"
+while [[ -L "$self" ]]; do
+  target="$(readlink "$self")"
+  [[ "$target" == /* ]] && self="$target" || self="$(dirname "$self")/$target"
+done
+GLOO_ROOT="$(cd "$(dirname "$self")/.." && pwd)"
+source "$GLOO_ROOT/bin/lib.sh"
+
+gloo_common_flag "$@" && exit 0
+
+if ! command -v "${CLAUDE_BIN:-claude}" >/dev/null 2>&1; then
+  echo "glaude: Claude Code is not installed (https://code.claude.com/docs/en/setup)" >&2
+  exit 1
+fi
+
+gloo_ensure_proxy
+
+export ANTHROPIC_BASE_URL="$GLOO_PROXY_URL"
+export ANTHROPIC_AUTH_TOKEN="$GLOO_PROXY_TOKEN"
+unset ANTHROPIC_API_KEY
+
+exec "${CLAUDE_BIN:-claude}" "$@"

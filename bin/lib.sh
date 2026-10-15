@@ -1,11 +1,11 @@
 # Shared helpers for glaude / godex. Expects GLOO_ROOT to be set to the repo root.
 
-GLOO_CONFIG_FILE="${GLOO_CONFIG_FILE:-$HOME/.config/better-glooai/env}"
+GLOO_CONFIG_FILE="${GLOO_CONFIG_FILE:-$HOME/.config/glaude/env}"
 if [[ ! -f "$GLOO_CONFIG_FILE" && -f "$GLOO_ROOT/.env" ]]; then
   GLOO_CONFIG_FILE="$GLOO_ROOT/.env"
 fi
 GLOO_LOG="${GLOO_PROXY_LOG:-$HOME/Library/Logs/gloo-proxy.log}"
-[[ "$(uname)" == "Darwin" ]] || GLOO_LOG="${GLOO_PROXY_LOG:-${XDG_STATE_HOME:-$HOME/.local/state}/better-glooai/proxy.log}"
+[[ "$(uname)" == "Darwin" ]] || GLOO_LOG="${GLOO_PROXY_LOG:-${XDG_STATE_HOME:-$HOME/.local/state}/glaude/proxy.log}"
 
 gloo_config() {
   [[ -f "$GLOO_CONFIG_FILE" ]] || return 0

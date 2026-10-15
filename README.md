@@ -1,6 +1,8 @@
-# better-glooai
+# glaude
 
 Run **Claude Code** and **Codex** on [Gloo AI](https://docs.gloo.com) models.
+
+> Unofficial community project. Not affiliated with or endorsed by Gloo.
 
 - `glaude`: Claude Code, backed by Gloo's Claude models
 - `godex`: Codex, backed by any Gloo model
@@ -12,10 +14,10 @@ Both commands start a small local proxy on demand (`127.0.0.1:8787`). It transla
 Requires macOS or Linux, Node.js 24+, git, and a [Gloo AI API key](https://docs.gloo.com/studio/manage-api-credentials).
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/matthewmichel/better-glooai/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/matthewmichel/glaude/main/install.sh | bash
 ```
 
-The installer asks for your API key and saves it to `~/.config/better-glooai/env` (mode 600). To install without the prompt, pass the key in the environment: `curl ... | GLOO_API_KEY=sk_... bash`.
+The installer asks for your API key and saves it to `~/.config/glaude/env` (mode 600). To install without the prompt, pass the key in the environment: `curl ... | GLOO_API_KEY=sk_... bash`.
 
 You also need the agent CLIs themselves:
 
@@ -42,7 +44,7 @@ Gloo publishes its list of model IDs at <https://platform.ai.gloo.com/platform/v
 
 ## Configuration
 
-Settings live in `~/.config/better-glooai/env`:
+Settings live in `~/.config/glaude/env`:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
@@ -65,7 +67,7 @@ After editing this file, run `glaude --stop-proxy`. The next command starts the 
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/matthewmichel/better-glooai/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/matthewmichel/glaude/main/install.sh | bash -s -- --uninstall
 ```
 
 ## Development

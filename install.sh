@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Installs glaude (Claude Code on Gloo AI) and godex (Codex on Gloo AI).
-#   curl -fsSL https://raw.githubusercontent.com/matthewmichel/better-glooai/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/matthewmichel/glaude/main/install.sh | bash
 #   ... | bash -s -- --uninstall
 # Environment overrides: GLOO_API_KEY, GLOO_HOME, GLOO_BIN_DIR, GLOO_REPO_URL, GLOO_REF
 set -euo pipefail
 
-REPO_URL="${GLOO_REPO_URL:-https://github.com/matthewmichel/better-glooai.git}"
+REPO_URL="${GLOO_REPO_URL:-https://github.com/matthewmichel/glaude.git}"
 REF="${GLOO_REF:-main}"
-INSTALL_DIR="${GLOO_HOME:-$HOME/.local/share/better-glooai}"
+INSTALL_DIR="${GLOO_HOME:-$HOME/.local/share/glaude}"
 BIN_DIR="${GLOO_BIN_DIR:-$HOME/.local/bin}"
-CONFIG_DIR="$HOME/.config/better-glooai"
+CONFIG_DIR="$HOME/.config/glaude"
 CONFIG_FILE="$CONFIG_DIR/env"
 
 say() { printf '\033[1m==>\033[0m %s\n' "$*"; }
@@ -55,7 +55,7 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   mkdir -p "$CONFIG_DIR"
   umask 077
   cat >"$CONFIG_FILE" <<EOF
-# better-glooai configuration (read by the local proxy behind glaude/godex)
+# glaude configuration (read by the local proxy behind glaude/godex)
 GLOO_API_KEY=$key
 PORT=8787
 # Model used by godex when -m is not given

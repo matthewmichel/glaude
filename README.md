@@ -40,6 +40,14 @@ Both commands also take these flags:
 | `--proxy-log` | Follow the proxy log |
 | `--stop-proxy` | Stop the background proxy |
 
+### Make plain `claude` use Gloo
+
+```bash
+glaude --set-default     # undo with: glaude --unset-default
+```
+
+This adds two keys to `~/.claude/settings.json`, so every Claude Code launch goes through the proxy: the terminal, scripts, and the VS Code/Cursor extension. `env.ANTHROPIC_BASE_URL` points Claude Code at the proxy. `apiKeyHelper` is set to `glaude --api-key-helper`, which starts the proxy if it isn't running. A backup of the previous file is written to `settings.json.glaude-backup`. The installer offers to do this for you (`GLAUDE_SET_DEFAULT=1` answers yes without asking).
+
 Gloo publishes its list of model IDs at <https://platform.ai.gloo.com/platform/v2/models>.
 
 ## Configuration

@@ -2,7 +2,7 @@
 # Installs glaude (Claude Code on Gloo AI) and godex (Codex on Gloo AI).
 #   curl -fsSL https://raw.githubusercontent.com/matthewmichel/glaude/main/install.sh | bash
 #   ... | bash -s -- --uninstall
-# Environment overrides: GLOO_API_KEY, GLOO_HOME, GLOO_BIN_DIR, GLOO_REPO_URL, GLOO_REF
+# Environment overrides: GLOO_API_KEY, GLAUDE_SET_DEFAULT=1|0, GLOO_HOME, GLOO_BIN_DIR, GLOO_REPO_URL, GLOO_REF
 set -euo pipefail
 
 REPO_URL="${GLOO_REPO_URL:-https://github.com/matthewmichel/glaude.git}"
@@ -17,7 +17,10 @@ warn() { printf '\033[33mwarning:\033[0m %s\n' "$*" >&2; }
 die() { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 
 if [[ "${1:-}" == "--uninstall" ]]; then
-  [[ -x "$INSTALL_DIR/bin/glaude" ]] && "$INSTALL_DIR/bin/glaude" --stop-proxy || true
+  if [[ -x "$INSTALL_DIR/bin/glaude" ]]; then
+    "$INSTALL_DIR/bin/glaude" --unset-default || true
+    "$INSTALL_DIR/bin/glaude" --stop-proxy || true
+  fi
   rm -f "$BIN_DIR/glaude" "$BIN_DIR/godex"
   rm -rf "$INSTALL_DIR"
   say "Removed glaude, godex and $INSTALL_DIR"
@@ -83,6 +86,16 @@ case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
   *) warn "$BIN_DIR is not on your PATH. Add this to your shell profile: export PATH=\"$BIN_DIR:\$PATH\"" ;;
 esac
+set_default="${GLAUDE_SET_DEFAULT:-}"
+if [[ -z "$set_default" ]] && (: </dev/tty) 2>/dev/null; then
+  printf 'Also make plain `claude` (terminal, scripts, IDE extension) use Gloo? [y/N] ' >/dev/tty
+  read -r answer </dev/tty
+  [[ "$answer" =~ ^[Yy] ]] && set_default=1
+fi
+if [[ "$set_default" == 1 ]]; then
+  "$INSTALL_DIR/bin/glaude" --set-default || warn "Could not update Claude Code settings; run 'glaude --set-default' later."
+fi
+
 command -v claude >/dev/null 2>&1 || warn "Claude Code not found; glaude needs it: https://code.claude.com/docs/en/setup"
 command -v codex >/dev/null 2>&1 || warn "Codex not found; godex needs it: npm install -g @openai/codex"
 
@@ -93,4 +106,5 @@ Done. Try:
   godex                  Codex on Gloo AI
   glaude --update        pull the latest version
   glaude --proxy-log     follow the proxy log
+  glaude --set-default   make plain \`claude\` use Gloo too (undo: --unset-default)
 EOF
